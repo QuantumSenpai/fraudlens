@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FraudLens — Transaction Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-1: #ECE9F7;
+    --bg-2: #DAD5EF;
+    --navy: #1C1A33;
+    --navy-2: #26234A;
+    --card: #FFFFFF;
+    --accent: #6C5CE7;
+    --text: #201E3A;
+    --muted: #75738F;
+    --safe: #2FAE6E;
+    --danger: #E5546B;
+    --border: #E4E1F2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--text);
+    background: radial-gradient(circle at 20% -10%, var(--bg-2), var(--bg-1) 55%);
+    min-height: 100vh;
+    padding: 48px 20px 80px;
+  }
+  .wrap { max-width: 460px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 18px; margin-bottom: 36px; }
+  .brand .mark { width: 20px; height: 20px; position: relative; }
+  .brand .mark::before, .brand .mark::after {
+    content: ""; position: absolute; background: var(--accent); border-radius: 2px;
+  }
+  .brand .mark::before { width: 20px; height: 4px; top: 8px; left: 0; }
+  .brand .mark::after { width: 4px; height: 20px; top: 0; left: 8px; }
+
+  h1 { font-family: 'Outfit', sans-serif; font-size: 30px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); font-size: 14.5px; margin-bottom: 28px; }
+
+  .card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 20px 60px -20px rgba(28, 26, 51, 0.18);
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  label { display: block; font-size: 12.5px; font-weight: 500; color: var(--muted); margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .grid label:first-of-type, .grid > div:first-child label { margin-top: 16px; }
+
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #FAFAFE;
+    color: var(--text);
+    font-size: 14.5px;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s ease;
+  }
+  input:focus { outline: none; border-color: var(--accent); background: #fff; }
+
+  button {
+    margin-top: 26px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  button:hover { opacity: 0.9; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  #error {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #FDEEF0;
+    color: var(--danger);
+    font-size: 13.5px;
+  }
+
+  #result { display: none; margin-top: 20px; }
+  .score-card {
+    border-radius: 18px;
+    padding: 20px;
+    background: var(--navy);
+    color: #fff;
+  }
+  .score-card.flagged { background: linear-gradient(135deg, #3A1E2B, var(--navy)); }
+  .verdict { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot.safe { background: var(--safe); }
+  .dot.flagged { background: var(--danger); }
+
+  .score-row { display: flex; justify-content: space-between; padding: 9px 0; font-size: 13.5px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .score-row span:first-child { color: rgba(255,255,255,0.6); }
+  .score-row span:last-child { font-weight: 600; }
+
+  .rules { margin-top: 16px; }
+  .rule {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.75);
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .rule b { color: #fff; }
+  .orb { position: fixed; border-radius: 50%; filter: blur(60px); opacity: 0.5; pointer-events: none; z-index: 0; }
+  .orb-1 { width: 280px; height: 280px; background: #B7A9F0; top: -60px; left: -80px; }
+  .orb-2 { width: 220px; height: 220px; background: #8FE3D0; bottom: -40px; right: -60px; }
+  .wrap { position: relative; z-index: 1; }
+
+  input { position: relative; }
+  input:focus { box-shadow: 0 0 0 4px rgba(108,92,231,0.12); }
+  button { position: relative; overflow: hidden; }
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="wrap">
+  <div class="brand"><span class="mark"></span> FraudLens</div>
+  <h1>Transaction check</h1>
+  <div class="sub">Run a transaction through the scoring engine</div>
+
+  <div class="card">
+    <form id="predict-form">
+      <div class="grid">
+        <div>
+          <label>User ID</label>
+          <input type="text" id="user_id" value="u1" required>
+        </div>
+        <div>
+          <label>Device ID</label>
+          <input type="text" id="device_id" value="dev_A" required>
+        </div>
+        <div>
+          <label>Amount</label>
+          <input type="number" id="amount" value="5000" required>
+        </div>
+        <div>
+          <label>Time</label>
+          <input type="number" id="time" value="10000" required>
+        </div>
+        <div>
+          <label>Latitude</label>
+          <input type="number" step="any" id="lat" value="22.5726" required>
+        </div>
+        <div>
+          <label>Longitude</label>
+          <input type="number" step="any" id="lon" value="88.3639" required>
+        </div>
+      </div>
+      <label>Timestamp</label>
+      <input type="datetime-local" id="timestamp" required>
+
+      <button type="submit" id="submit-btn">Check transaction</button>
+    </form>
+
+    <div id="error"></div>
+    <div id="result"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

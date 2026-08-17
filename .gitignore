@@ -1,0 +1,13 @@
+@'
+venv/
+env/
+*/venv/
+*/env/
+__pycache__/
+*.pyc
+.env
+node_modules/
+'@ | Set-Content -Path .gitignore -Encoding utf8
+ml/data/raw/*.csv
+
+ml/data/processed/*.csv
