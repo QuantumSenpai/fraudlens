@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: fraudlens-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --no-proxy-headers
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.18
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: TRUSTED_PROXY_IPS
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: ENV
+        value: dev
+      - key: MODEL_VERSION
+        value: xgb_creditcard_v1

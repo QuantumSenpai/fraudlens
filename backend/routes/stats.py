@@ -1,28 +1,14 @@
-from fastapi import APIRouter
-from services.db import supabase
+from fastapi import APIRouter, Depends
+from fastapi import HTTPException
+from services.auth import require_admin
+from services.db import get_supabase
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_admin)])
 
 
 @router.get("/stats")
 def stats():
-    total = supabase.table("transactions").select("id", count="exact").execute()
-    flagged = supabase.table("transactions").select("id", count="exact").eq("flagged", True).execute()
-    recent = (
-        supabase.table("transactions")
-        .select("*")
-        .order("txn_timestamp", desc=True)
-        .limit(10)
-        .execute()
-    )
-
-    total_count = total.count or 0
-    flagged_count = flagged.count or 0
-    flagged_rate = round((flagged_count / total_count) * 100, 2) if total_count else 0
-
-    return {
-        "total_transactions": total_count,
-        "flagged_transactions": flagged_count,
-        "flagged_rate_percent": flagged_rate,
-        "recent_transactions": recent.data,
-    }
+    try:
+        return get_supabase().rpc("legacy_stats", {}).execute().data
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Legacy statistics are unavailable") from exc

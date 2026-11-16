@@ -1,0 +1,62 @@
+{
+  "model_version": "xgb_live_v1",
+  "dataset": {
+    "source": "SYNTHETIC",
+    "description": "Generated demonstration data with overlapping fraud patterns and noise; not measured transaction data.",
+    "rows": "30000",
+    "payment_method_mapping": "Randomly assigned across card, netbanking, upi, wallet."
+  },
+  "seed": 42,
+  "split": {
+    "strategy": "stratified",
+    "test_size": 0.25,
+    "train_rows": 22500,
+    "test_rows": 7500
+  },
+  "threshold": 0.5,
+  "scale_pos_weight": 38.54305799648506,
+  "features": [
+    "amount",
+    "log_amount",
+    "hour",
+    "day_of_week",
+    "is_night",
+    "txns_last_15min",
+    "txns_last_24h",
+    "amount_ratio_to_user_mean",
+    "device_age_hours",
+    "device_user_count",
+    "distance_from_last_txn_km",
+    "speed_kmh",
+    "payment_method_card",
+    "payment_method_netbanking",
+    "payment_method_upi",
+    "payment_method_wallet"
+  ],
+  "metrics": {
+    "precision": 0.9104477611940298,
+    "recall": 0.9631578947368421,
+    "f1": 0.9360613810741688,
+    "roc_auc": 0.9993685650514795,
+    "pr_auc": 0.9905467954585577,
+    "false_positive_rate": 0.0024623803009575923,
+    "confusion_matrix": {
+      "labels": [
+        "legit",
+        "fraud"
+      ],
+      "values": [
+        [
+          7292,
+          18
+        ],
+        [
+          7,
+          183
+        ]
+      ]
+    }
+  },
+  "artifact": "backend/models/xgb_live_v1.pkl",
+  "limitations": "Synthetic or PaySim-derived metrics are not real-world performance. This model is a demonstration baseline and requires evaluation on representative, consented merchant outcomes."
+}

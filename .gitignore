@@ -1,13 +1,17 @@
-@'
 venv/
 env/
+.venv/
 */venv/
 */env/
+*/.venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .env
+.env.local
+.next/
+*.tsbuildinfo
 node_modules/
-'@ | Set-Content -Path .gitignore -Encoding utf8
+.pytest_cache/
+.DS_Store
 ml/data/raw/*.csv
-
 ml/data/processed/*.csv

@@ -1,0 +1,27 @@
+{
+  "scoring": {
+    "ml_weight": 0.6,
+    "rule_weight": 0.4,
+    "review_from": 30,
+    "block_from": 60,
+    "legacy_flag_from": 40
+  },
+  "context": {
+    "user_history_limit": 50,
+    "device_decision_limit": 100
+  },
+  "rules": {
+    "HIGH_AMOUNT": {"enabled": true, "weight": 25, "threshold": 100000},
+    "STRUCTURING": {"enabled": true, "weight": 35, "low": 90000, "high": 100000, "minimum_count": 3, "window_hours": 24, "hard": true},
+    "VELOCITY": {"enabled": true, "weight": 30, "minimum_count": 4, "window_minutes": 15},
+    "IMPOSSIBLE_TRAVEL": {"enabled": true, "weight": 40, "minimum_speed_kmh": 1000, "minimum_distance_km": 50, "hard": true},
+    "NEW_DEVICE": {"enabled": true, "weight": 15},
+    "ODD_HOUR": {"enabled": true, "weight": 10, "start_hour": 0, "end_hour": 5},
+    "SHARED_DEVICE": {"enabled": true, "weight": 25, "minimum_users": 3},
+    "FAILED_PAYMENT_BURST": {"enabled": true, "weight": 30, "minimum_count": 3, "window_minutes": 10},
+    "AMOUNT_SPIKE": {"enabled": true, "weight": 30, "minimum_history": 5, "history_limit": 20, "average_multiplier": 5},
+    "NEW_USER_HIGH_VALUE": {"enabled": true, "weight": 20, "threshold": 50000},
+    "GEO_DEVICE_MISMATCH": {"enabled": false, "weight": 20, "minimum_offset_difference_hours": 3},
+    "TRUSTED_DEVICE_DISCOUNT": {"enabled": true, "weight": -10, "minimum_age_days": 30, "minimum_clean_decisions": 5}
+  }
+}
