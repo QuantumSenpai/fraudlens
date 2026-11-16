@@ -1,0 +1,51 @@
+export type Decision = "ALLOW" | "REVIEW" | "BLOCK";
+export type PaymentMethod = "upi" | "card" | "netbanking" | "wallet";
+export type Reason = { rule: string; detail: string; weight: number };
+export type MlFactor = { feature: string; contribution: number };
+export type Check = {
+  check_id: string;
+  decision: Decision;
+  final_score: number;
+  ml_score: number;
+  rule_score: number;
+  reasons: Reason[];
+  model_version: string;
+  ml_factors: MlFactor[];
+  latency_ms: number;
+};
+export type Order = { order_id: string; amount: number; currency: string; key_id: string };
+export type PaymentStatus = "created" | "authorized" | "captured" | "failed";
+export type Verification = { order_id: string; payment_id: string; status: PaymentStatus };
+export type Review = {
+  id: string;
+  user_id: string;
+  device_id: string;
+  amount: number;
+  currency: string;
+  payment_method: PaymentMethod;
+  final_score: number;
+  reasons: Reason[];
+  created_at: string;
+  review: null | { outcome: "approve" | "reject"; reviewer: string; note: string | null; created_at: string };
+};
+export type Stats = {
+  total_checks: number;
+  decision_split: Record<Decision, number>;
+  flagged_count: number;
+  flagged_rate_percent: number;
+  top_triggered_rules: { rule: string; count: number }[];
+  average_latency_ms: number | null;
+  p95_scoring_latency_ms: number | null;
+  last_24h_hourly_counts: { hour: string; count: number }[];
+};
+export type Evaluation = {
+  labels_total: number;
+  true_positive: number;
+  false_positive: number;
+  false_negative: number;
+  true_negative: number;
+  precision: number | null;
+  recall: number | null;
+  false_positive_rate: number | null;
+};
+export type FeedEvent = { check_id: string; decision: Decision; user_id: string; amount: number; final_score: number; created_at: string };
