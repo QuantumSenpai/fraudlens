@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { forward } from "@/lib/server-api";
 
+export const maxDuration = 120;
+
 type Context = { params: Promise<{ path: string[] }> };
 
 export async function GET(request: NextRequest, context: Context): Promise<Response> {

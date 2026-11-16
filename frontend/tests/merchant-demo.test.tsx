@@ -20,6 +20,31 @@ beforeEach(() => {
 });
 
 describe("merchant decisions", () => {
+  for (const [label, value] of [["Amount in INR", "500000"], ["Merchant user ID", "different-user"], ["Payment method", "card"]]) {
+    it(`requires a fresh check after changing ${label}`, async () => {
+      vi.stubGlobal("fetch", vi.fn(async (input: string) => input.endsWith("/v1/signals") ? json({ device_id: "device" }) : json(base)));
+      render(<MerchantDemo />);
+      await waitFor(() => expect(screen.getByRole("button", { name: /Run fraud check/ }).hasAttribute("disabled")).toBe(false));
+      fill();
+      await screen.findByText("Clear to continue");
+      fireEvent.change(screen.getByLabelText(label), { target: { value } });
+      expect(screen.queryByText("Clear to continue")).toBeNull();
+      expect(screen.queryByRole("button", { name: /Continue to test Checkout/ })).toBeNull();
+      expect(screen.getByText("Waiting for a check")).toBeTruthy();
+    });
+  }
+
+  it("locks transaction details while a check is in flight", async () => {
+    let finish: (response: Response) => void = () => {};
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(resolve => { finish = resolve; })));
+    render(<MerchantDemo />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /Run fraud check/ }).hasAttribute("disabled")).toBe(false));
+    fill();
+    for (const label of ["Merchant user ID", "Amount in INR", "Payment method"]) expect(screen.getByLabelText(label).hasAttribute("disabled")).toBe(true);
+    await act(async () => { finish(json({}, 503)); });
+    await waitFor(() => expect(screen.getByLabelText("Amount in INR").hasAttribute("disabled")).toBe(false));
+  });
+
   for (const decision of ["ALLOW", "REVIEW", "BLOCK"] as const) {
     it(`shows ${decision} and gates payment`, async () => {
       const requests: string[] = [];
@@ -85,6 +110,10 @@ describe("merchant decisions", () => {
     status = "captured";
     fireEvent.click(screen.getByRole("button", { name: /Refresh capture status/ }));
     await screen.findByText(/Paid in test mode/);
+    fireEvent.change(screen.getByLabelText("Amount in INR"), { target: { value: "500000" } });
+    expect(screen.queryByText(/Paid in test mode/)).toBeNull();
+    expect(screen.queryByRole("button", { name: /Reopen|capture status|Checkout/ })).toBeNull();
+    expect(screen.getByText("Waiting for a check")).toBeTruthy();
   });
 });
 

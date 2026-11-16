@@ -96,7 +96,7 @@ def test_record_signal_upserts_device_link_and_trust_score(monkeypatch):
 
         def execute(self):
             if self.table == "devices" and self.wrote:
-                return SimpleNamespace(data={"first_seen": first_seen, "last_seen": first_seen})
+                return SimpleNamespace(data=[{"first_seen": first_seen, "last_seen": first_seen}])
             if self.table == "device_users" and self.operation == "select":
                 return SimpleNamespace(count=1, data=[])
             if self.table == "checks":

@@ -322,10 +322,10 @@ button.text-link { border:0; background:transparent; padding:0; }
   font-size:1.6rem;
   margin:0
 }
-.result-card p {
+.helper-panel .result-card p {
   color:#ded7c9
 }
-.result-card .mini-label {
+.helper-panel .result-card .mini-label {
   color:#c5bcb0
 }
 .decision-badge {

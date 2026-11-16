@@ -141,7 +141,7 @@ def create_check(payload: CheckInput, merchant_id: str, idempotency_key: str, cl
         "latency_ms": latency_ms,
     }
     try:
-        stored = client.table("checks").insert(row).select("*").single().execute().data
+        stored = client.table("checks").insert(row).execute().data[0]
     except Exception:
         existing = _existing(client, merchant_id, idempotency_key)
         if existing:

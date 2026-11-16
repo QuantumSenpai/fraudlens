@@ -6,4 +6,10 @@ from services.rules.base import RuleContext, RuleResult
 def evaluate(context: RuleContext, config: dict[str, Any]) -> RuleResult | None:
     if context.amount <= config["threshold"]:
         return None
-    return RuleResult("HIGH_AMOUNT", f"amount {context.amount:.2f} exceeds {config['threshold']:.2f}", config["weight"])
+    return RuleResult(
+        "HIGH_AMOUNT",
+        f"amount {context.amount:.2f} exceeds {config['threshold']:.2f}"
+        + ("; reviewer approval required" if config.get("hard", False) else ""),
+        config["weight"],
+        config.get("hard", False),
+    )

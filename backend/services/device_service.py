@@ -52,10 +52,8 @@ def record_device_signal(payload: DeviceSignalsInput, client_ip: str) -> dict[st
         row = (
             client.table("devices")
             .upsert(device, on_conflict="device_id")
-            .select("first_seen,last_seen")
-            .single()
             .execute()
-            .data
+            .data[0]
         )
         client.table("device_users").upsert(
             {"device_id": payload.device_id, "user_id": payload.user_id},

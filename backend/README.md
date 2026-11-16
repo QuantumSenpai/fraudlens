@@ -2,6 +2,8 @@
 
 FraudLens is a fraud decision gateway for student demos. A merchant registers device signals, requests a decision before payment, creates a Razorpay test-mode order only for an allowed or reviewer-approved check, and receives signed payment updates by webhook.
 
+The [connected local setup report](../docs/supabase-setup.md) records the applied Supabase migrations, local login configuration, live verification, and remaining external deployment/webhook setup.
+
 ## Architecture
 
 ```mermaid
@@ -18,7 +20,7 @@ flowchart LR
     Admin --> DB
 ```
 
-The API uses Supabase's server-side service key. RLS is enabled and has no public policies. Never send `SUPABASE_KEY` or the service role key to a browser, PWA, extension, or frontend build. Apply migrations `001`, `003`, `004`, `005`, `006`, `007`, `008`, and `009` from [migrations](migrations/README.md) in that order. Migration `002` is the optional manual merchant seed.
+The API uses Supabase's server-side service key. RLS is enabled and has no public policies. Never send `SUPABASE_KEY` or the service role key to a browser, PWA, extension, or frontend build. Apply migrations `001`, `003`, `004`, `005`, `006`, `007`, `008`, `009`, and `010` from [migrations](migrations/README.md) in that order. Migration `002` is the optional manual merchant seed.
 
 ## Quick start
 
@@ -129,7 +131,7 @@ The score is `0.6 × ML score + 0.4 × rule score`, with both scores on a 0–10
 
 | Rule | Weight | Trigger summary | Hard |
 |---|---:|---|---|
-| `HIGH_AMOUNT` | 25 | Amount above ₹100,000 | No |
+| `HIGH_AMOUNT` | 25 | Amount above ₹100,000 | Yes |
 | `STRUCTURING` | 35 | 3+ transactions from ₹90,000–₹100,000 in 24 hours | Yes |
 | `VELOCITY` | 30 | 4+ checks in 15 minutes | No |
 | `IMPOSSIBLE_TRAVEL` | 40 | More than 1,000 km/h across at least 50 km | Yes |
@@ -143,6 +145,8 @@ The score is `0.6 × ML score + 0.4 × rule score`, with both scores on a 0–10
 | `TRUSTED_DEVICE_DISCOUNT` | -10 | Device at least 30 days old with 5 clean decisions | No |
 
 Weights and thresholds are demonstration heuristics until evaluated against reviewed or otherwise representative outcomes. `rules_config.json` is the source of rule weights and thresholds.
+
+Amounts above ₹100,000 require at least `REVIEW`, even when the model score is low or a trusted-device discount applies. A score of 60 or higher still produces `BLOCK`. Older high-value `ALLOW` checks cannot create payment orders under this policy; submit a fresh check and obtain reviewer approval. The merchant form clears its previous decision and payment state when transaction details or location change, and locks those details during a request.
 
 ## Security and data handling
 
@@ -175,7 +179,7 @@ The service definition is in [render.yaml](render.yaml). To deploy through the R
 |---|---|
 | `PYTHON_VERSION` | `3.11.18` |
 | `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_KEY` | Supabase service role key; server only |
+| `SUPABASE_KEY` | Supabase secret key or legacy service role key; server only |
 | `RAZORPAY_KEY_ID` | Test key id beginning `rzp_test_` |
 | `RAZORPAY_KEY_SECRET` | Razorpay test key secret |
 | `RAZORPAY_WEBHOOK_SECRET` | Secret configured for the Razorpay webhook |

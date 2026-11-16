@@ -93,12 +93,13 @@ def test_payment_order_refuses_live_key_outside_explicit_prod(monkeypatch):
     assert response.json()["error"]["message"] == "Service unavailable"
 
 
-def test_payment_order_uses_paise_stores_order_and_replays_idempotently(monkeypatch):
+@pytest.mark.parametrize(("amount", "decision", "paise"), [("125.50", "ALLOW", 12550), ("500000", "REVIEW", 50000000)])
+def test_payment_order_uses_paise_stores_order_and_replays_idempotently(monkeypatch, amount, decision, paise):
     check = {
         "id": "00000000-0000-0000-0000-000000000001",
         "merchant_id": "merchant-1",
-        "decision": "ALLOW",
-        "amount": "125.50",
+        "decision": decision,
+        "amount": amount,
         "currency": "INR",
     }
     stored_payments = []
@@ -130,7 +131,11 @@ def test_payment_order_uses_paise_stores_order_and_replays_idempotently(monkeypa
             if self.operation == "insert":
                 stored_payments.append(self.payload)
                 return SimpleNamespace(data=[self.payload])
-            rows = [check] if self.table == "checks" else stored_payments if self.table == "payments" else []
+            rows = {
+                "checks": [check],
+                "payments": stored_payments,
+                "reviews": [{"check_id": check["id"], "outcome": "approve"}],
+            }.get(self.table, [])
             rows = [row for row in rows if all(row.get(key) == value for key, value in self.filters.items())]
             return SimpleNamespace(data=rows)
 
@@ -158,12 +163,12 @@ def test_payment_order_uses_paise_stores_order_and_replays_idempotently(monkeypa
     first = payment_service.create_payment_order(check["id"], "order-intent-1", "merchant-1")
     replay = payment_service.create_payment_order(check["id"], "order-intent-1", "merchant-1")
 
-    assert first == replay == {"order_id": "order_test_1", "amount": 12550, "currency": "INR", "key_id": "rzp_test_public"}
-    assert remote_calls[0][1]["json"] == {"amount": 12550, "currency": "INR", "receipt": check["id"]}
+    assert first == replay == {"order_id": "order_test_1", "amount": paise, "currency": "INR", "key_id": "rzp_test_public"}
+    assert remote_calls[0][1]["json"] == {"amount": paise, "currency": "INR", "receipt": check["id"]}
     assert len(remote_calls) == len(stored_payments) == 1
 
 
-def test_blocked_check_and_unapproved_review_cannot_create_order(monkeypatch):
+def test_blocked_unapproved_and_legacy_high_amount_checks_cannot_create_order(monkeypatch):
     check = {"id": "check-1", "merchant_id": "merchant-1", "decision": "BLOCK", "amount": "200", "currency": "INR"}
 
     class Query:
@@ -193,6 +198,8 @@ def test_blocked_check_and_unapproved_review_cannot_create_order(monkeypatch):
     monkeypatch.setattr(payment_service.settings, "razorpay_key_id", "rzp_test_public")
     monkeypatch.setattr(payment_service.settings, "razorpay_key_secret", "secret")
     monkeypatch.setattr(payment_service.settings, "env", "dev")
+    remote = []
+    monkeypatch.setattr(payment_service, "_create_remote_order", lambda *args: remote.append(args) or {"id": "unexpected-order"})
 
     with pytest.raises(Exception) as blocked:
         payment_service.create_payment_order("check-1", "intent", "merchant-1")
@@ -202,6 +209,12 @@ def test_blocked_check_and_unapproved_review_cannot_create_order(monkeypatch):
     with pytest.raises(Exception) as pending:
         payment_service.create_payment_order("check-1", "intent", "merchant-1")
     assert getattr(pending.value, "status_code", None) == 409
+
+    check.update(decision="ALLOW", amount="500000")
+    with pytest.raises(Exception) as legacy:
+        payment_service.create_payment_order("check-1", "intent", "merchant-1")
+    assert getattr(legacy.value, "status_code", None) == 409
+    assert remote == []
 
 
 def test_verify_checkout_payment_uses_stored_order_and_updates_authorized_status(monkeypatch):

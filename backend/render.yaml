@@ -3,6 +3,7 @@ services:
     name: fraudlens-api
     runtime: python
     plan: free
+    healthCheckPath: /health
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --no-proxy-headers
@@ -28,4 +29,4 @@ services:
       - key: ENV
         value: dev
       - key: MODEL_VERSION
-        value: xgb_creditcard_v1
+        value: xgb_live_v1

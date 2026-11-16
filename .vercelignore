@@ -1,0 +1,15 @@
+backend/
+ml/
+scripts/
+docs/
+.vscode/
+**/.env
+**/.env.*
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/node_modules/
+**/.next/
+**/*.tsbuildinfo
+frontend/screenshots/
+/package-lock.json

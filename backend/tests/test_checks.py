@@ -63,7 +63,7 @@ def test_check_replay_returns_stored_decision_without_duplicate_or_rescore(monke
 
         def execute(self):
             if self.operation == "insert":
-                return SimpleNamespace(data=self.database.row)
+                return SimpleNamespace(data=[self.database.row])
             if self.table == "checks" and self.columns == "*":
                 row = self.database.row
                 matches = row and all(row.get(key) == value for key, value in self.filters.items())

@@ -9,6 +9,7 @@ from fastapi import HTTPException
 
 from services.config import settings
 from services.db import get_supabase
+from services.rules_config import RULES_CONFIG
 
 
 def validate_payment_settings(config: Any = settings) -> None:
@@ -78,6 +79,14 @@ def create_payment_order(check_id: str, idempotency_key: str, merchant_id: str) 
     check = checks[0]
     if check["decision"] == "BLOCK":
         raise HTTPException(status_code=409, detail="Blocked checks cannot create payment orders")
+    high_amount = RULES_CONFIG["rules"]["HIGH_AMOUNT"]
+    if (
+        check["decision"] == "ALLOW"
+        and high_amount["enabled"]
+        and high_amount.get("hard", False)
+        and Decimal(str(check["amount"])) > Decimal(str(high_amount["threshold"]))
+    ):
+        raise HTTPException(status_code=409, detail="High-value payment requires a new fraud check and reviewer approval")
     if check["decision"] == "REVIEW":
         approved = _data(
             client.table("reviews")

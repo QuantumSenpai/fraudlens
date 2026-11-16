@@ -43,7 +43,7 @@ export async function forward(request: NextRequest, segments: string[], method: 
     try { JSON.parse(body); } catch { return error(400, "Invalid JSON"); }
   }
   try {
-    const upstream = await fetch(url, { method, headers, body, cache: "no-store", signal: AbortSignal.timeout(20000) });
+    const upstream = await fetch(url, { method, headers, body, cache: "no-store", signal: AbortSignal.timeout(90000) });
     const outputHeaders = new Headers({ "Content-Type": upstream.headers.get("content-type") || "application/json", "Cache-Control": "no-store" });
     for (const name of ["x-request-id", "retry-after", "server-timing"]) {
       const value = upstream.headers.get(name);
