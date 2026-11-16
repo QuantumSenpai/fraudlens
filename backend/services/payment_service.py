@@ -80,6 +80,8 @@ def create_payment_order(check_id: str, idempotency_key: str, merchant_id: str) 
     if check["decision"] == "BLOCK":
         raise HTTPException(status_code=409, detail="Blocked checks cannot create payment orders")
     high_amount = RULES_CONFIG["rules"]["HIGH_AMOUNT"]
+    if high_amount["enabled"] and Decimal(str(check["amount"])) >= Decimal(str(high_amount.get("block_threshold", "Infinity"))):
+        raise HTTPException(status_code=409, detail="Payment amount meets or exceeds the hard limit")
     if (
         check["decision"] == "ALLOW"
         and high_amount["enabled"]

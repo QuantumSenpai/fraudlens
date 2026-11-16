@@ -14,7 +14,7 @@ def calculate_final_score(ml_score: float, rule_score: int, config: dict[str, An
 
 def resolve_decision(final_score: float, results: list[RuleResult], config: dict[str, Any]) -> str:
     thresholds = config["scoring"]
-    if final_score >= thresholds["block_from"]:
+    if final_score >= thresholds["block_from"] or any(result.block for result in results):
         return "BLOCK"
     if final_score >= thresholds["review_from"] or any(result.hard for result in results):
         return "REVIEW"

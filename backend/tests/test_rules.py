@@ -104,7 +104,7 @@ def test_decision_thresholds(score, hard, expected):
     assert resolve_decision(score, results, CONFIG) == expected
 
 
-@pytest.mark.parametrize("amount", [100000.01, 500000, 5000000, 9999999.99])
+@pytest.mark.parametrize("amount", [100000.01, 499999.99])
 @pytest.mark.parametrize("trusted", [False, True])
 def test_high_amount_requires_review_even_with_low_model_score(amount, trusted):
     context = clean_context()
@@ -117,6 +117,21 @@ def test_high_amount_requires_review_even_with_low_model_score(amount, trusted):
     score = calculate_final_score(2, calculate_rule_score(results), CONFIG)
     assert score < CONFIG["scoring"]["review_from"]
     assert resolve_decision(score, results, CONFIG) == "REVIEW"
+
+
+@pytest.mark.parametrize("amount", [500000, 5000000, 9999999.99])
+@pytest.mark.parametrize("trusted", [False, True])
+def test_amount_limit_blocks_even_when_model_and_weighted_score_are_low(amount, trusted):
+    context = clean_context()
+    context.amount = amount
+    context.user_history = [row(amount)]
+    if trusted:
+        context.device_age_days = 90
+        context.device_decisions = ["ALLOW"] * 10
+    results = evaluate_rules(context, CONFIG)
+    score = calculate_final_score(2, calculate_rule_score(results), CONFIG)
+    assert score < CONFIG["scoring"]["review_from"]
+    assert resolve_decision(score, results, CONFIG) == "BLOCK"
 
 
 @pytest.mark.parametrize("amount", [250, 100000])

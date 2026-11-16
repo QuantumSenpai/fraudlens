@@ -10,6 +10,7 @@ class RuleResult:
     detail: str
     weight: int
     hard: bool = False
+    block: bool = False
 
 
 @dataclass

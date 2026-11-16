@@ -11,7 +11,7 @@
     "device_decision_limit": 100
   },
   "rules": {
-    "HIGH_AMOUNT": {"enabled": true, "weight": 25, "threshold": 100000, "hard": true},
+    "HIGH_AMOUNT": {"enabled": true, "weight": 25, "threshold": 100000, "block_threshold": 500000, "hard": true},
     "STRUCTURING": {"enabled": true, "weight": 35, "low": 90000, "high": 100000, "minimum_count": 3, "window_hours": 24, "hard": true},
     "VELOCITY": {"enabled": true, "weight": 30, "minimum_count": 4, "window_minutes": 15},
     "IMPOSSIBLE_TRAVEL": {"enabled": true, "weight": 40, "minimum_speed_kmh": 1000, "minimum_distance_km": 50, "hard": true},

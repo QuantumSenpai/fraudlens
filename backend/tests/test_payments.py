@@ -93,7 +93,7 @@ def test_payment_order_refuses_live_key_outside_explicit_prod(monkeypatch):
     assert response.json()["error"]["message"] == "Service unavailable"
 
 
-@pytest.mark.parametrize(("amount", "decision", "paise"), [("125.50", "ALLOW", 12550), ("500000", "REVIEW", 50000000)])
+@pytest.mark.parametrize(("amount", "decision", "paise"), [("125.50", "ALLOW", 12550), ("499999.99", "REVIEW", 49999999)])
 def test_payment_order_uses_paise_stores_order_and_replays_idempotently(monkeypatch, amount, decision, paise):
     check = {
         "id": "00000000-0000-0000-0000-000000000001",
@@ -170,6 +170,7 @@ def test_payment_order_uses_paise_stores_order_and_replays_idempotently(monkeypa
 
 def test_blocked_unapproved_and_legacy_high_amount_checks_cannot_create_order(monkeypatch):
     check = {"id": "check-1", "merchant_id": "merchant-1", "decision": "BLOCK", "amount": "200", "currency": "INR"}
+    approved = False
 
     class Query:
         def __init__(self, table):
@@ -187,7 +188,7 @@ def test_blocked_unapproved_and_legacy_high_amount_checks_cannot_create_order(mo
             return self
 
         def execute(self):
-            row = check if self.table == "checks" else None
+            row = check if self.table == "checks" else {"check_id": "check-1", "outcome": "approve"} if self.table == "reviews" and approved else None
             return SimpleNamespace(data=[row] if row and all(row.get(k) == v for k, v in self.filters.items()) else [])
 
     class Database:
@@ -214,6 +215,12 @@ def test_blocked_unapproved_and_legacy_high_amount_checks_cannot_create_order(mo
     with pytest.raises(Exception) as legacy:
         payment_service.create_payment_order("check-1", "intent", "merchant-1")
     assert getattr(legacy.value, "status_code", None) == 409
+
+    check["decision"] = "REVIEW"
+    approved = True
+    with pytest.raises(Exception) as approved_over_limit:
+        payment_service.create_payment_order("check-1", "intent", "merchant-1")
+    assert getattr(approved_over_limit.value, "status_code", None) == 409
     assert remote == []
 
 

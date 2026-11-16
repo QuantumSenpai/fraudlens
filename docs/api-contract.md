@@ -105,7 +105,7 @@ Response:
 
 `decision` is `ALLOW`, `REVIEW`, or `BLOCK`. `ml_factors` contains up to five XGBoost raw-margin contributions; positive values increase the model margin and are not probability percentages. Reusing the same idempotency key for the same merchant returns the stored check response.
 
-The default `HIGH_AMOUNT` policy forces at least `REVIEW` for an amount above ₹100,000, regardless of the weighted score. A `BLOCK` score still takes precedence. A low displayed score can therefore accompany `REVIEW`; the triggered reason explains the mandatory approval.
+The default `HIGH_AMOUNT` policy forces at least `REVIEW` above ₹100,000 and forces `BLOCK` at ₹500,000 or more, regardless of the weighted score. A `BLOCK` score still takes precedence. The triggered reason explains the mandatory approval or hard amount limit; the displayed weighted score is not an approval percentage.
 
 ## Payments
 
@@ -114,6 +114,8 @@ The default `HIGH_AMOUNT` policy forces at least `REVIEW` for an amount above �
 Headers: `X-API-Key`, `Idempotency-Key`. The `check_id` must belong to the merchant. `BLOCK` is rejected. `REVIEW` requires an approving review. Only INR orders are supported.
 
 An older high-value `ALLOW` check is also rejected with `409` under the current mandatory-review policy. Submit a fresh check and obtain approval before requesting an order. Existing check records and idempotency responses retain their original historical decisions.
+
+Payment amounts of ₹500,000 or more are rejected with `409` even if an older check was allowed or its review was approved.
 
 ```json
 {"check_id": "00000000-0000-0000-0000-000000000001"}

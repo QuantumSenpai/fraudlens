@@ -146,7 +146,7 @@ The score is `0.6 × ML score + 0.4 × rule score`, with both scores on a 0–10
 
 Weights and thresholds are demonstration heuristics until evaluated against reviewed or otherwise representative outcomes. `rules_config.json` is the source of rule weights and thresholds.
 
-Amounts above ₹100,000 require at least `REVIEW`, even when the model score is low or a trusted-device discount applies. A score of 60 or higher still produces `BLOCK`. Older high-value `ALLOW` checks cannot create payment orders under this policy; submit a fresh check and obtain reviewer approval. The merchant form clears its previous decision and payment state when transaction details or location change, and locks those details during a request.
+Amounts above ₹100,000 and below ₹500,000 require at least `REVIEW`. Amounts of ₹500,000 or more force `BLOCK`, even with a low model score or trusted-device discount. The payment-order endpoint also enforces this hard limit against older checks, including previously approved reviews. A score of 60 or higher still produces `BLOCK`. Older high-value `ALLOW` checks below the hard limit require a fresh check and reviewer approval. The merchant form clears its previous decision and payment state when transaction details or location change, and locks those details during a request.
 
 ## Security and data handling
 
