@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 280" width="1200" height="280" role="img" aria-label="FraudLens — fraud decision gateway: device signals, rules engine, model scoring, ALLOW/REVIEW/BLOCK, reviewer queue, Razorpay test-mode integration">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#161616"/>
+      <stop offset="50%" stop-color="#1A1A1A"/>
+      <stop offset="100%" stop-color="#161616"/>
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F44A22"/>
+      <stop offset="100%" stop-color="#FF6B3D"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <mask id="fadeRight">
+      <rect x="0" y="0" width="1200" height="280" fill="url(#fadeRightGrad)"/>
+    </mask>
+    <linearGradient id="fadeRightGrad" x1="70%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="white"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="280" fill="url(#bgGradient)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.03">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FEF8E8" stroke-width="0.5"/>
+    </pattern>
+    <rect width="1200" height="280" fill="url(#grid)"/>
+  </g>
+
+  <!-- Left accent line -->
+  <line x1="60" y1="60" x2="60" y2="220" stroke="url(#accentGradient)" stroke-width="3" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Logo mark -->
+  <g transform="translate(80, 80)">
+    <rect width="120" height="120" rx="16" fill="#161616" stroke="#F44A22" stroke-width="2"/>
+    <path d="M30 98V22h60M30 60h51M71 98V60" fill="none" stroke="#F44A22" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Title -->
+  <text x="230" y="135" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="42" font-weight="700" fill="#FEF8E8" letter-spacing="-0.5px">FraudLens</text>
+
+  <!-- Tagline -->
+  <text x="230" y="178" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="400" fill="#A8AAAC" letter-spacing="0.2px">Fraud decision gateway — signals, rules, model, review</text>
+
+  <!-- Flow indicators -->
+  <g transform="translate(230, 210)">
+    <!-- Signal -->
+    <circle cx="0" cy="0" r="6" fill="#F44A22" opacity="0.9" filter="url(#softGlow)"/>
+    <text x="18" y="5" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#E4E2E3">Device signals</text>
+
+    <!-- Arrow -->
+    <path d="M70 0 L90 0" stroke="#A8AAAC" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="90,-3 98,0 90,3" fill="#A8AAAC"/>
+
+    <!-- Rules -->
+    <circle cx="110" cy="0" r="6" fill="#F44A22" opacity="0.7"/>
+    <text x="128" y="5" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#E4E2E3">Rules engine</text>
+
+    <!-- Arrow -->
+    <path d="M195 0 L215 0" stroke="#A8AAAC" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="215,-3 223,0 215,3" fill="#A8AAAC"/>
+
+    <!-- Model -->
+    <circle cx="235" cy="0" r="6" fill="#F44A22" opacity="0.7"/>
+    <text x="253" y="5" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#E4E2E3">Model scoring</text>
+
+    <!-- Arrow -->
+    <path d="M330 0 L350 0" stroke="#A8AAAC" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="350,-3 358,0 350,3" fill="#A8AAAC"/>
+
+    <!-- Decision -->
+    <circle cx="370" cy="0" r="6" fill="#F44A22" opacity="0.9" filter="url(#softGlow)"/>
+    <text x="388" y="5" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#FEF8E8">ALLOW / REVIEW / BLOCK</text>
+  </g>
+
+  <!-- Right side: subtle code snippet hint -->
+  <g transform="translate(820, 60)" opacity="0.6" mask="url(#fadeRight)">
+    <rect x="0" y="0" width="320" height="180" rx="12" fill="#0D0D0D" stroke="#2A2A2A" stroke-width="1"/>
+    <text x="20" y="35" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="12" fill="#A8AAAC">POST /v1/checks</text>
+    <text x="20" y="60" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="12" fill="#E4E2E3">{"user_id": "usr_42",</text>
+    <text x="20" y="80" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="12" fill="#E4E2E3"> "device_id": "dev_abc",</text>
+    <text x="20" y="100" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="12" fill="#E4E2E3"> "amount": 1250.50,</text>
+    <text x="20" y="120" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="12" fill="#E4E2E3"> "payment_method": "upi"</text>
+    <text x="20" y="140" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="12" fill="#E4E2E3">}</text>
+    <text x="20" y="165" font-family="'SF Mono', 'Fira Code', 'Monaco', monospace" font-size="11" fill="#F44A22">→ { "decision": "REVIEW", "final_score": 38.2 }</text>
+  </g>
+
+  <!-- Bottom accent -->
+  <line x1="60" y1="255" x2="1140" y2="255" stroke="#2A2A2A" stroke-width="1" stroke-dasharray="8 12"/>
+</svg>
