@@ -2,6 +2,8 @@
 
 Next.js App Router frontend for the FraudLens fraud decision gateway. Public pages explain the flow. The merchant demo and reviewer workspace require separate frontend passwords, and all FastAPI credentials stay on the Next.js server.
 
+The [deployment report](../docs/deployment.md) contains the live Vercel/Render URLs, required project roots, secret configuration, hosted verification, and rollback steps.
+
 ## Run locally on macOS with zsh
 
 From the repository root:

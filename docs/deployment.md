@@ -2,6 +2,20 @@
 
 The frontend is the Next.js app in `frontend/`; the FastAPI backend is in `backend/`. Deploying the repository root as Vercel's “Other” framework produces an empty static deployment and a 404 instead of the app.
 
+## Live deployment, verified 2026-11-16
+
+- Website: https://fraudlens-ml.vercel.app
+- Merchant access: https://fraudlens-ml.vercel.app/access
+- Reviewer access: https://fraudlens-ml.vercel.app/access?role=admin
+- Backend health: https://fraudlens-api-ocjj.onrender.com/health
+- Render service: `srv-dbtikt6i0phs73f1d370`, free plan, Singapore.
+- Both platforms use the verified `main` branch. Render automatically rebuilds for `backend/**` changes.
+- Seven server-side production variables are configured in Vercel; backend credentials are in the Render secret file. The requested local login passwords were retained for hosted access.
+
+The public landing/access routes return HTTP 200. Render health reports `model_loaded=true` and `db_reachable=true`. An isolated Chromium browser verified both role logins, actual Supabase-backed low/high-value checks, payment gates, stale-result invalidation, the hosted SSE feed, and saving reviewer feedback. No browser runtime errors were observed. The hosted verification's temporary data was removed; user testing records were preserved.
+
+Razorpay Checkout capture/webhook delivery has not been verified. Configure the provider's test webhook as `https://fraudlens-api-ocjj.onrender.com/v1/webhooks/razorpay` with the matching server webhook secret before expecting captured-payment updates.
+
 ## Vercel
 
 Use the existing `fraudlens` project with root directory `frontend`, framework `nextjs`, install command `npm ci`, build command `npm run build`, and automatic output-directory detection. Run the CLI from the repository root so its configured `frontend` root is resolved once.

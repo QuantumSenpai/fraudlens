@@ -44,6 +44,6 @@ Open `http://localhost:3000/access` for the merchant or `http://localhost:3000/a
 
 ## Remaining external setup
 
-Public deployment and a real Razorpay callback/capture were not performed. For hosted webhooks, configure the deployed `/v1/webhooks/razorpay` URL in the Razorpay test dashboard using the generated `RAZORPAY_WEBHOOK_SECRET` from `backend/.env`. A local secret alone does not configure the provider.
+The frontend and backend are now deployed and verified; see the [deployment report](deployment.md) for public URLs and hosted verification. A real Razorpay callback/capture has not been verified. Configure `https://fraudlens-api-ocjj.onrender.com/v1/webhooks/razorpay` in the Razorpay test dashboard using the matching `RAZORPAY_WEBHOOK_SECRET` from `backend/.env`. A server secret alone does not configure the provider.
 
 The initial browser attempt encountered a repeating reload in the Turbopack development server; verification uses the production build. The development reload issue was not investigated as part of database setup.
